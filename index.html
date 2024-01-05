@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+<body>
+    <form>
+     <label for = "exp_amount">ExpenseAmount</label>
+     <input type="number" name="amount" id="exp_amount" required>
+     <label for = "desc">choose description</label>
+     <input type ="text" name="description" id="desc" >
+     <label for="kind">choose category</label>
+     <select id="kind" name="category">
+        <option value="movie">Movie</option>
+        <option value="Fuel">Fuel</option>
+        <option value="Electronics">Electronics</option>
+      </select>
+      <button id="btn_add" type="submit">Add Expense</button>
+    </form>
+        <ul class="main">
+        </ul>
+    <script>
+        let form = document.querySelector('form');
+        let main = document.querySelector('.main');
+        form.addEventListener('submit', (event)=>{
+            let amount = event.target.amount.value;
+            let desc = event.target.description.value;
+            let category = event.target.category.value;
+            let user_data = JSON.parse(localStorage.getItem("userexp"))??[];
+            user_data.push(
+                {
+                    'amount': amount,
+                    'desc': desc,
+                    'category': category
+                }
+            )
+            localStorage.setItem("userexp", JSON.stringify(user_data));
+            event.target.reset();
+            display();
+            event.preventDefault();
+        })
+        let display = ()=>{
+            let user_data = JSON.parse(localStorage.getItem("userexp"))??[];
+            let finaldata = '';
+            user_data.forEach( (element, index) => {
+                finaldata += `
+            <li><span>${element.amount}-</span><span>${element.desc}-</span><span>${element.category}
+                </span><button onclick="removeItem(${index})">Delete Expense</button>
+            <button onclick="editItem(${index})">Edit Expense</button></li><br>`
+            });
+            main.innerHTML = finaldata;
+        }
+
+        let removeItem = (index)=>{
+            let user_data = JSON.parse(localStorage.getItem("userexp"))??[];
+            user_data.splice(index, 1);
+            localStorage.setItem("userexp", JSON.stringify(user_data));
+            display();
+        }
+        let editItem = (index) => {
+            let user_data = JSON.parse(localStorage.getItem("userexp")) ?? [];
+
+            // Set the values in the form for editing
+            form.amount.value = user_data[index].amount;
+            form.description.value = user_data[index].desc;
+            form.category.value = user_data[index].category;
+            editIndex = index;
+            user_data[index] = {
+                'amount': form.amount.value,
+                'desc': form.description.value,
+                'category': form.category.value
+            };
+
+            localStorage.setItem("userexp", JSON.stringify(user_data));
+            display(); // Set the index being edited
+            removeItem(editIndex);
+        };
+        
+        display();
+    </script>
+</body>
+</html>
