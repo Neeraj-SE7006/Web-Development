@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+  // Placeholder functions, replace with your actual implementations
+  posts =[];
+function createPost(postContent) {
+    return new Promise((resolve) => {
+        // Your post creation logic here
+        setTimeout(() => {
+            posts.push(postContent);
+            resolve(postContent);
+        }, 1000);
+    });
+}
+
+// Placeholder function, replace with your actual implementation
+function updateLastUserActivityTime() {
+    return new Promise((resolve) => {
+        // Your last activity time update logic here
+        setTimeout(() => {
+            const lastActivityTime = new Date().toISOString();
+            resolve(lastActivityTime);
+        }, 1000);
+    });
+}
+
+// User creates a post
+createPost('Post1')
+    .then((post) => {
+        console.log('Post Created:', post);
+
+        // Update user's last activity time
+        return updateLastUserActivityTime();
+    })
+    .then((lastActivityTime) => {
+        console.log('Last Activity Time Updated:', lastActivityTime);
+    });
+    </script>
+</body>
+</html>
