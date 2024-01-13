@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script> 
+    console.log('Pereson1 : Show ticket');
+    console.log('Pereson1 : Show ticket');
+    const preMovie = new Promise((resolve, reject)=>{
+        setTimeout(()=>{ resolve('ticket'); },1000);
+    });
+    const getpopcorn = new Promise((resolve, reject)=>{
+        resolve('popcorn');
+    });
+    const getbutter = new Promise((resolve, reject)=>{
+        resolve('butter');
+    });
+    const Colddrink = new Promise((resolve, reject)=>{
+        resolve('beers');
+    });
+    async function getData(){
+        const val = await preMovie;
+        console.log(`wife : I have the ${val}`);
+        console.log('husband : we shoud go in');
+        console.log('wife : NO I am hungry');
+        const val1 = await getpopcorn;
+        console.log(`husband : I got some ${val1}`);
+        console.log('husband : we should go in');
+        console.log(`wife : I need some butter on my ${val1}`);
+        const val2 = await getbutter;
+        console.log(`husband : I got some ${val2} on ${val1}`);
+        console.log('husband : anything else darling');
+        const val3 = await Colddrink;
+        console.log(`wife : yes I want ${val3}`);
+        console.log(`i got two ${val3}`);
+        console.log('wife : ok,lets go we are getting late');
+        console.log('Thank you for the reminder');
+        console.log(`person3 : show ${val}`)
+    }
+    getData();
+    </script>
+</body>
+</html>
