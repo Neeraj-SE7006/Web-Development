@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    }
+
+    .container {
+        text-align: center;
+    }
+
+    form {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    select {
+        width: 200px;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    button[type="submit"],
+    input[type="button"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        background-color: #f9f9f9;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
+    li::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    li button {
+        flex: right;
+        background-color: #f44336;
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+
+    li button:hover {
+        background-color: #c62828;
+    }
+
+    li div {
+        margin-bottom: 10px;
+    }
+
+    li span {
+        font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker App using JavaScript Local Storage</h1>
+    <form onsubmit="saveToLocalStorage(event)">
+        <label>Choose expense amount:</label>
+        <input type="text" name="expenseamount" id="expenseamountInputTag" required>
+        <br>
+        <label>Choose description:</label>
+        <input type="text" name="description" id="descriptionInputTag" required>
+        <br>
+        <label>Choose a category:</label>
+        <select name="category" id="categoryInputTag">
+            <option value="Fuel">Fuel</option>
+            <option value="Food">Food</option>
+            <option value="Electricity">Electricity</option>
+            <option value="Wifi">Wifi</option>
+            <option value="Movie">Movie</option>
+        </select>
+        <br>
+        <button type="submit">Add Expense</button>
+    </form>
+    <ul id="listOfItems"></ul>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script>
+        function saveToLocalStorage(event) {
+            event.preventDefault();
+            const expenseAmount = event.target.expenseamount.value;
+            const description = event.target.description.value;
+            const category = event.target.category.value;
+
+            const obj = {
+                expenseAmount,
+                description,
+                category
+            };
+
+            axios.post("https://crudcrud.com/api/0ff26c297bea463fa2e68acff780518c/EmpDetails", obj)
+            .then((res) => {
+                showUserOnScreen(res.data)
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+
+            // localStorage.setItem(expenseAmount, JSON.stringify(obj));
+            // showUserOnScreen(obj);
+            // event.target.reset();
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+
+            axios.get("https://crudcrud.com/api/0ff26c297bea463fa2e68acff780518c/EmpDetails")
+            .then((response)=>{
+            console.log(response)
+
+            for(var i=0;i<response.data.length;i++){
+                showUserOnScreen(response.data[i]);
+            }
+     })
+     .catch((err)=>{
+        console.log(err)
+     })
+    });
+
+
+        function showUserOnScreen(obj) {
+            const parentElem = document.getElementById('listOfItems')
+            // parentElem.innerHTML = parentElem.innerHTML + `<li>${obj.expenseAmount} - ${obj.description} - ${obj.category}</li>`
+
+            const childElem = document.createElement('li');
+            childElem.textContent = obj._id+'-'+obj.expenseAmount + ' - ' + obj.description + ' - ' + obj.category + ' '
+
+            const deleteButton = document.createElement('input')
+            deleteButton.type = 'button'
+            deleteButton.value = 'Delete'
+            deleteButton.className = 'del-btn'
+            deleteButton.onclick = () => {
+                deleteUser(obj._id);
+                localStorage.removeItem(obj.expenseAmount)
+                parentElem.removeChild(childElem)
+                
+        }
+
+            const editButton = document.createElement('input')
+            editButton.type = 'button'
+            editButton.value = 'Edit'
+            editButton.onclick = () => {
+                editUser(obj._id,obj.expenseAmount,obj.description,obj.category);
+                localStorage.removeItem(obj.expenseAmount)
+                parentElem.removeChild(childElem)
+                //document.getElementById('expenseamountInputTag').value = obj.expenseAmount
+                //document.getElementById('descriptionInputTag').value = obj.description
+                //document.getElementById('categoryInputTag').value = obj.category
+            }
+            childElem.appendChild(editButton)
+            childElem.appendChild(deleteButton)
+            parentElem.appendChild(childElem)
+        }
+
+        function deleteUser(_id){
+            axios.delete(`https://crudcrud.com/api/0ff26c297bea463fa2e68acff780518c/EmpDetails/${_id}`)
+            .then((res)=>{
+                localStorage.removeItem(obj.expenseAmount)
+                parentElem.removeChild(childElem)
+                console.log(res)
+            }).catch((err)=>{
+                console.log(err);
+            });
+        }
+        function editUser(_id,amnt,desc,cat){
+            document.getElementById('expenseamountInputTag').value = amnt;
+                document.getElementById('descriptionInputTag').value = desc;
+                document.getElementById('categoryInputTag').value = cat;
+                axios.put("https://crudcrud.com/api/0ff26c297bea463fa2e68acff780518c/EmpDetails/"+_id,{
+                    'expenseAmount' : document.getElementById('expenseamountInputTag').value,
+                    'description' : document.getElementById('descriptionInputTag').value,
+                    'category' : document.getElementById('categoryInputTag').value
+                })
+                .then((res)=>{
+                    deleteUser(_id);
+                    console.log(res);
+                })
+                .catch((err)=>{
+                    console.log(err);
+                })
+
+        }
+    </script>
+</body>
+</html>
