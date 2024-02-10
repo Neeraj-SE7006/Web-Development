@@ -1,0 +1,518 @@
+Callback Functions:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const posts = [
+            {title : 'Post One', body : 'This is post one'},
+            {title : 'Post two', body : 'This is post two'}
+        ];
+        function getpost(){
+            setTimeout(() => {
+                let output = '';
+                posts.forEach((post, index) =>{
+                    output += `<li> ${post.title} <li>`;
+                });
+                document.body.innerHTML = output;
+            }, 300);
+        }
+        function createpost(post, callback){
+            setTimeout(()=>{
+                posts.push(post);
+                callback();
+            }, 600);
+        }
+
+        function createpost2(post1, callback){
+            setTimeout(()=>{
+                posts.push(post1);
+                callback({title : 'fourth post', body : 'This is my fourth post'}, getpost);
+                document.body.innerHTML = `<p>very nice</p>`;
+            }, 900);
+        }
+        createpost2({title:'Third Post', body : 'This is my third post'}, createpost);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+Promise:
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width>, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+  users = {}
+  function createpost(user){
+    return new Promise((resolve, reject)=>{
+      setTimeout(function(){
+        users.name = user;
+        resolve(users.name);
+      }, 1000)
+    });
+  }
+  function updatelastActivityTime(){
+    return new Promise((resolve, reject)=>{
+      setTimeout(function(){
+        users.lastactivityTime = new Date().toISOString();
+        resolve(users.lastactivityTime);
+      }, 1000)
+    });
+  }
+  function deletepost(){
+    return new Promise((resolve, reject)=>{
+      setTimeout(function(){
+        delete users.name;
+        resolve();
+      },10000)
+    });
+  }
+/*createpost('Akash created post1')
+.then((res1)=>{
+  console.log(res1,'at');
+  return updatelastActivityTime();
+})
+.then((res2)=>{
+  console.log(res2);
+})
+.then(function(res2){
+  console.log('post deleted!');
+  console.log(res2);
+
+})
+.catch((err)=>{
+  console.log(err);
+})*/
+Promise.all([createpost('user1 create post1'), updatelastActivityTime()])
+.then((res1)=>{
+  console.log(res1);
+})
+.catch(function(err){
+  console.log(err);
+});
+console.log(users);
+deletepost()
+.then(function(){
+console.log('post deleted!');
+console.log(users);
+});
+</script>
+</body>
+</html>
+
+
+
+Async await:
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        console.log('Pereson1 : Show ticket')
+        console.log('Pereson1 : Show ticket')
+        const preMovie = new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                resolve('ticket');
+            },1000);
+        });
+        const getpopcorn = new Promise((resolve, reject)=>{
+                resolve('popcorn');
+        });
+        const getbutter = new Promise((resolve, reject)=>{
+                resolve('butter');
+        });
+        const Colddrink = new Promise((resolve, reject)=>{
+                resolve('beers');
+        });
+        async function getData(){
+            const val = await preMovie;
+            console.log(`wife : I have the ${val}`);
+            console.log('husband : we shoud go in');
+            console.log('wife : NO I am hungry');
+            const val1 = await getpopcorn;
+            console.log(`husband : I got some ${val1}`);
+            console.log('husband : we should go in');
+            console.log(`wife : I need some butter on my ${val1}`);
+            const val2 = await getbutter;
+            console.log(`husband : I got some ${val2} on ${val1}`);
+            console.log('husband : anything else darling');
+            const val3 = await Colddrink;
+            console.log(`wife : yes I want ${val3}`);
+            console.log(`i got two ${val3}`);
+            console.log('wife : ok,lets go we are getting late');
+            console.log('Thank you for the reminder');
+            console.log(`person3 : show ${val}`)
+
+        }
+        getData();
+
+    </script>
+
+</body>
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <Script>
+        const posts = [
+            {title : "post1", body : "This is post1"},
+            {title : 'post2', body : "This is post2"}
+        ]
+        const createpost = async (post)=>{
+            let creating = new Promise(function(resolve, reject){
+                setTimeout(()=>{
+                    let error = false;
+                    if(!error){
+                        posts.push(post);
+                        resolve('pushed');
+                    }
+                    else{
+                        reject("Error : Something went wrong!");
+                    }
+                }, 1000)
+        });
+        let getpost = new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                let output = "";
+                posts.forEach((post)=>{
+                    output += `<li>${post.title}</li>`;
+                });
+                resolve(document.body.innerHTML = output);
+            }, 2000);
+        });
+        console.log(posts);
+        console.log("please wait we r pushing yours post");
+        let crtpost = await creating;
+        console.log(crtpost);
+        let gtpst = await getpost;
+    }
+        createpost({title : "post3", body : "this is post3"});
+        createpost({title : "post4", body : "this is post4"});
+        
+        function deletePost(){
+    //complete this function
+    return new Promise((resolve, reject) => {
+        setTimeout( () => {
+            if(posts.length > 0){
+                const poppedElement  = posts.pop();
+                resolve(poppedElement);
+            } else {
+                reject("ERROR: ARRAY IS EMPTY")
+            }
+        }, 6000)
+    });
+
+}
+
+
+        deletePost().then((res)=>console.log(res));
+
+
+    </Script>
+</body>
+</html>
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    </style>
+</head>
+<body>
+    <script>
+        /*const p1 = new Promise((resolve, reject)=>{
+        setTimeout(() => {
+            //console.log('promise resolved1');
+            resolve('1');
+        }, 1000);
+       });
+
+       const p2 = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            //console.log('promise resolved2');
+            resolve('2');
+        }, 10000);
+       });
+
+         function func(){
+            let result = Promise.all([p1, p2]);
+            console.log(result);
+            result.then((res)=>{
+                console.log(res);
+            })
+        }
+        func();
+        */
+
+       /*const p1 = new Promise((resolve, reject)=>{
+        setTimeout(() => {
+            console.log('promise resolved1');
+            resolve('1');
+        }, 1000);
+       });
+
+       const p2 = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            console.log('promise resolved2');
+            resolve('2');
+        }, 10000);
+       });
+
+         function func(){
+            let result = Promise.all([p1, p2]);
+            console.log(result);
+            result.then((res)=>{
+                console.log(res);
+            })
+        }
+        func();
+        */
+/*function init(){
+        const p1 = new Promise((resolve, reject)=>{
+        setTimeout(() => {
+            console.log('promise resolved1');
+            resolve('1');
+        }, 1000);
+       });
+
+       const p2 = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            console.log('promise resolved2');
+            resolve('2');
+        }, 10000);
+       });
+
+         function func(){
+            let result = Promise.all([p1, p2]);
+            console.log(result);
+            result.then((res)=>{
+                console.log(res);
+            })
+        }
+        func();
+    }
+    init();
+    */
+
+    /*function init(){
+        const p1 = new Promise((resolve, reject)=>{
+        setTimeout(() => {
+            //console.log('promise resolved1');
+            resolve('1');
+        }, 1000);
+       });
+
+       const p2 = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            //console.log('promise resolved2');
+            resolve('2');
+        }, 10000);
+       });
+
+         async function func(){
+            let result = await Promise.all([p1, p2]);
+            console.log(result);
+        } 
+        func();
+    }
+    init();
+    */
+
+    /*function init(){
+        const p1 = new Promise((resolve, reject)=>{
+        setTimeout(() => {
+            //console.log('promise resolved1');
+            resolve('1');
+        }, 1000);
+       });
+
+       const p2 = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            //console.log('promise resolved2');
+            resolve('2');
+        }, 10000);
+       });
+
+         async function func(){
+            let result = await Promise.all([p1, p2]);
+            console.log(result);
+        }
+        func();
+    }
+    init();
+    */
+   /*
+     function init(){
+        const p1 = new Promise((resolve, reject)=>{
+        setTimeout(() => {
+            //console.log('promise resolved1');
+            resolve('1');
+        }, 1000);
+       });
+
+       const p2 = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            //console.log('promise resolved2');
+            resolve('2');
+        }, 10000);
+       });
+
+         async function func(){
+            let result = await Promise.race([p1, p2]);
+            console.log(result);
+        }
+        func();
+    }
+    init();
+   */
+
+   function init(){
+        const p1 = new Promise((resolve, reject)=>{
+        setTimeout(() => {
+            //console.log('promise resolved1');
+            reject('rejected the promise!');
+        }, 1000);
+       });
+
+       const p2 = new Promise((resolve, reject)=>{
+        setTimeout(()=>{
+            //console.log('promise resolved2');
+            resolve('2');
+        }, 2000);
+       });
+
+         async function func(){
+            try{
+            let result = await Promise.any([p1, p2]);
+            console.log(result);
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+    func();
+}
+    init();
+
+    
+
+
+
+    </script>
+</body>
+</html>
+
+
+
+
+
+*resolve promises with multiple arguments --> Basically promise resolve by only one argument but if u want to resolve and want to passes with multiple arguments u basically provides the arguments in the on object form.
+
+
+/*In the proceedToPayment function, you are using resolve with two arguments 
+(resolve('payment completed successfully', orderID)). 
+However, resolve should be called with a single argument. If you want to pass multiple values, 
+you should pass them as an object or an array.
+*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        cart = ['kurta', 'pujama', 'tShirt', 'Shirt', 'Pent'];
+
+        function createOrder(cart) {
+            const pr = new Promise((resolve, reject) => {
+                if (!validateCart(cart)) {
+                    const err = new Error('Cart is not valid!');
+                    reject(err);
+                }
+                orderID = 12345;
+                if (orderID) {
+                    setTimeout(() => {
+                        resolve(orderID);
+                    }, 2000);
+                }
+            });
+            return pr;
+        }
+
+        function proceedToPayment(orderID) {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve({ message: 'payment completed successfully', orderID: orderID });
+                }, 1000);
+            });
+        }
+
+        function summary(orderID) {
+            var payAmount = 1200;
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    resolve({ amount: payAmount, orderID: orderID });
+                }, 2500);
+            });
+        }
+
+        function validateCart(cart) {
+            return true;
+        }
+
+        createOrder(cart)
+        .then((ordID) => {
+            alert(ordID);
+            return proceedToPayment(ordID);
+        })
+        .then((paymentInfo) => {
+            alert(paymentInfo.message);
+            return summary(paymentInfo.orderID);
+        })
+        .then((result) => {
+            document.body.innerHTML = `Payment Amount: ${result.amount}, Order ID: ${result.orderID}`;
+        })
+        .catch((err) => {
+            alert(err);
+        });
+    </script>
+</body>
+</html>
