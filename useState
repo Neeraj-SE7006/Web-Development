@@ -1,0 +1,104 @@
+##-->Add a button next to each expense which changes expense to 100$ whenever we click on it.
+ExpenseDetails.jsx
+import './ExpenseDetails.css'
+import { useState } from 'react';
+function ExpenseDetails(props){
+    const [amount, setdata] = useState(props.amount);
+    const clickHandler = ()=>{
+     setdata(100);
+     console.log(amount);
+    }
+    return(
+        <div className='details'> 
+                <div className='detail-div1'>{props.title}</div>
+                <div className='detail-div1'> {props.location}</div>
+                <div className='detail-div3'> ${amount}</div>
+                <button className = "btn" onClick={clickHandler}>Edit Expense</button>
+            </div>
+    )
+}
+export default ExpenseDetails;
+
+
+ExpenseItem.jsx
+import './ExpenseItem.css'
+import ExpenseDetails from './ExpenseDetails.js';
+function ExpenseItem(props){
+    const month = props.date.toLocaleString('en-US', {month: 'long'});
+    const day = props.date.toLocaleString('en-US', {day: '2-digit'});
+    const year = props.date.getFullYear();
+
+    return(
+                <div className='total'>
+                <div className='Date-div'>
+                        <div>{month}</div>
+                        <div>{year}</div>
+                        <div>{day}</div>
+                </div>
+                <div>
+                <ExpenseDetails title={props.title} amount={props.amount} location={props.location} />
+                </div>
+            </div>
+    );
+}
+
+export default ExpenseItem;
+
+
+
+App.jsx
+
+import ExpenseItem from "./components/Expense/ExpenseItem.js";
+import Headers from "./components/header.js";
+import './App.css'
+function App() {
+  const Expense = [
+    {
+      date: new Date(2023, 2, 331),
+      title: 'Room',
+      Amount: 100,
+      Location: 'Delhi',
+    },
+    {
+      date: new Date(2022, 3, 12),
+      title: 'LED',
+      Amount: 200,
+      Location: 'Dehradun',
+    },
+
+    {
+      date: new Date(2024, 1, 10),
+      title: 'TV',
+      Amount: 300,
+      Location: 'Banglore'
+    }
+  ]
+  return (
+    <div className="main-div">
+    {Expense.map((expense, index)=>(
+      <ExpenseItem date={expense.date} title={expense.title} amount={expense.Amount} location={expense.Location} />
+))}
+   </div>
+  );
+}
+
+export default App;
+
+
+index.js
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+import reportWebVitals from './reportWebVitals';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+    <App />
+);
+
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+reportWebVitals();
