@@ -1,0 +1,54 @@
+import React, { useState } from 'react';
+const NewExpense = ()=>{
+
+    const [formdata, setformdata] = useState({
+        title: '',
+        amount: '',
+        date: '',
+    });
+
+    const changeHandler = (event) =>{
+        const { name, value } = event.target;
+        setformdata((prevdata) => ({
+            ...prevdata,
+            [name]: value,
+        }));
+    };
+
+    const submitHandler = (event) =>{
+        event.preventDefault();
+        console.log('Form Data Submitted:', formdata);
+        alert('form submitted');
+    }
+    
+    return(
+        <div>
+            <form onSubmit={submitHandler}>
+      <div>
+        <label>
+          Expense Title:
+          <input type="text" name="title" value={formdata.title} onChange={changeHandler} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Expense Amount:
+          <input type="number" name="amount" value= {formdata.amount} onChange={changeHandler} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Date:
+          <input type="date" name="date" value= {formdata.date} onChange={changeHandler} />
+        </label>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <div>
+        <h2>Form Data:</h2>
+        <pre>{JSON.stringify(formdata)}</pre>
+      </div>
+    </div>
+    );
+}
+export default NewExpense;
