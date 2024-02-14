@@ -1,0 +1,276 @@
+---> index.js<---
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+import reportWebVitals from './reportWebVitals';
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+<App />
+);
+
+
+
+// If you want to start measuring performance in your app, pass a function
+
+// to log results (for example: reportWebVitals(console.log))
+
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+
+reportWebVitals();
+
+
+
+--> App.js <--
+import React, { useState } from 'react';
+import ExpenseItem from "./components/Expense/ExpenseItem.js";
+import NewExpense from "./components/NewRxpense/NewExpense.js";
+function App()
+{ const [expenses, setExpenses] = useState(
+[ { id: 1, title: 'Room', amount: 100, date: new Date(2023, 2, 13), }, 
+{ id: 2, title: 'LED', amount: 200, date: new Date(2023, 3, 12), },
+{ id: 3, title: 'TV', amount: 300, date: new Date(2023, 1, 20), } ]);
+ const [filteredYear, setFilteredYear] = useState('');
+ const addExpenseHandler = (expense) => { 
+setExpenses((prevExpenses) => [expense, ...prevExpenses]); 
+}; 
+const filterExpensesHandler = (selectedYear) => {
+setFilteredYear(selectedYear);
+};
+ const filteredExpenses = expenses.filter(exp => { if (!filteredYear) {
+return true; // Show all expenses if no year is selected 
+} 
+return exp.date.getFullYear().toString() === filteredYear; });
+ return (
+<div className="main-div"> 
+<NewExpense onAddExpense={addExpenseHandler} onFilterExpenses={filterExpensesHandler} />
+ {filteredExpenses.map((exp) => ( 
+<ExpenseItem key={exp.id} date={exp.date} title={exp.title} amount={exp.amount} /> ))
+} 
+</div> );
+}
+export default App;
+
+--> ExpenseItems.js <--
+
+import React from 'react';
+
+import './ExpenseItem.css'
+
+import ExpenseDetails from './ExpenseDetails.js';
+function ExpenseItem(props){
+const month = props.date.toLocaleString('en-US', { month: 'long' });
+const day = props.date.toLocaleString('en-US', { day: '2-digit' });
+const year = props.date.getFullYear();
+return(
+<div className='total'>
+<div className='Date-div'>
+<div>{month}</div>
+<div>{year}</div>
+<div>{day}</div>
+</div>
+<div>
+<ExpenseDetails title={props.title} amount={props.amount} />
+</div>
+</div>
+);
+}
+export default ExpenseItem;
+
+-->ExpenseDetails.js <--
+import './ExpenseDetails.css'
+import { useState } from 'react';
+function ExpenseDetails(props){
+const [amount, setdata] = useState(props.amount);
+const clickHandler = ()=>{
+setdata(100);
+console.log(amount);
+}
+return(
+<div className='details'>
+<div className='detail-div1'>{props.title}</div>
+<div className='detail-div2'> {amount}</div>
+<button className = "btn" onClick={clickHandler}>Edit Expense</button>
+</div>
+)
+}
+export default ExpenseDetails;
+
+
+NewExpense.js
+import React, { useState } from 'react';
+import ExpenseForm from './ExpenseForm';
+const NewExpense = (props) =>{
+const saveExpenseDataHandler = (data) =>{ 
+const expenseData = { ...data, id: Math.random().toString(), date: new Date(data.date), };
+props.onAddExpense(expenseData);
+};
+ const filterYearHandler = (selectedYear) => { props.onFilterExpenses(selectedYear); };
+
+ return( 
+<div> <ExpenseForm saveExpenseData={saveExpenseDataHandler} onFilterYear={filterYearHandler}/> </div> )
+}
+export default NewExpense;
+
+ExpenseForm.js
+
+
+
+import React, { useState } from 'react';
+
+const ExpenseForm = (props)=>{
+
+
+
+const [formdata, setformdata] = useState({
+
+title: '',
+
+amount: '',
+
+date: '',
+
+});
+
+const [submittedData, setSubmittedData] = useState(null);
+
+
+
+const changeHandler = (event) =>{
+
+const { name, value } = event.target;
+
+setformdata((prevdata) => ({
+
+...prevdata,
+
+[name]: value,
+
+}));
+
+};
+
+
+
+const submitHandler = (event) =>{
+
+event.preventDefault();
+
+props.saveExpenseData(formdata);
+
+setformdata({ title: '', amount: '', date: '' });
+
+}
+
+const yearChangeHandler = (event) => {
+
+const selectedYear = event.target.value;
+
+props.onFilterYear(selectedYear);
+
+};
+
+return(
+
+<div>
+
+<form onSubmit={submitHandler}>
+
+<div>
+
+<label>
+
+Expense Title:
+
+<input type="text" name="title" value={formdata.title} onChange={changeHandler} />
+
+</label>
+
+</div>
+
+<div>
+
+<label>
+
+Expense Amount:
+
+<input type="number" name="amount" value= {formdata.amount} onChange={changeHandler} />
+
+</label>
+
+</div>
+
+<div>
+
+<label>
+
+Date:
+
+<input type="date" name="date" value= {formdata.date} onChange={changeHandler} />
+
+</label>
+
+</div>
+
+<button type="submit">Submit</button>
+
+</form>
+
+
+
+<div>
+
+<label>
+
+Year:
+
+<select name="year" value={formdata.year} onChange={yearChangeHandler}>
+
+<option value="">Select Year</option>
+
+<option value="2010">2010</option>
+
+<option value="2011">2011</option>
+
+<option value="2012">2012</option>
+
+<option value="2013">2013</option>
+
+<option value="2014">2014</option>
+
+<option value="2015">2015</option>
+
+<option value="2016">2016</option>
+
+<option value="2017">2017</option>
+
+<option value="2018">2018</option>
+
+<option value="2019">2019</option>
+
+<option value="2020">2020</option>
+
+<option value="2021">2021</option>
+
+<option value="2022">2022</option>
+
+<option value="2023">2023</option>
+
+<option value="2024">2024</option>
+</select>
+
+</label>
+
+</div>
+
+</div>
+
+
+
+);
+
+}
+
+export default ExpenseForm;
