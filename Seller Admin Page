@@ -1,0 +1,178 @@
+Input.jsx
+
+import React from "react";
+
+const Input = ({ type, name, value, onChange, id, children }) => {
+
+  return (
+    <div className="input" style={{ display: "flex", alignItems: "center" }}>
+      <label htmlFor={id} style={{ marginRight: "8px" }}>
+        {children}
+      </label>
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
+        id={id}
+        style={{ height: "20px", marginRight: "20px" }}
+      />
+    </div>
+  );
+};
+
+export default Input;
+
+ExpenseForm.Jsx
+
+import React, { useState } from "react";
+
+import Input from "./input.jsx";
+
+
+
+const ExpenseForm = ({ onSaveExpenseData }) => {
+
+  const [formdata, setformdata] = useState({
+
+    product_id: "",
+
+    product_price: "",
+
+    product_name: ""
+
+  });
+
+
+
+  const onChange = (event) => {
+
+    const { name, value } = event.target;
+
+    setformdata((prevdata) => ({
+
+      ...prevdata,
+
+      [name]: value
+
+    }));
+
+  };
+
+  const onSubmitHandler = (event) => {
+
+    event.preventDefault();
+
+    // Save data to local storage
+
+    const newData = {
+
+      product_id: formdata.product_id,
+
+      product_price: formdata.product_price,
+
+      product_name: formdata.product_name
+
+    };
+
+    // Get existing data from local storage
+
+    const existingData = JSON.parse(localStorage.getItem("expenses")) || [];
+
+    // Save new data to local storage
+
+    localStorage.setItem("expenses", JSON.stringify([...existingData, newData]));
+
+    onSaveExpenseData(newData);
+
+    // Reset form data
+
+    setformdata({
+
+      product_id: "",
+
+      product_price: "",
+
+      product_name: ""
+
+    });
+
+  };
+
+  return (
+
+    <form onSubmit={onSubmitHandler} style={{ display: "flex", flexDirection: "row", width: "300px" }}>
+
+      <Input type="number" name="product_id" value={formdata.product_id} onChange={onChange} id="prdct_id">
+
+        Product ID :
+
+      </Input>
+
+      <Input type="number" name="product_price" value={formdata.product_price} onChange={onChange} id="prdct_price">
+
+        Selling Price :
+
+      </Input>
+
+      <Input type="text" name="product_name" value={formdata.product_name} onChange={onChange} id="prdct_name">
+
+        Product Name :
+
+      </Input>
+
+      <button type="submit">Add Expense</button>
+
+    </form>
+
+  );
+
+};
+
+export default ExpenseForm;
+
+App.js
+
+import React, { useState, useEffect } from "react";
+import ExpenseForm from "./Component/ExpenseForm";
+
+function App() {
+
+  const [expenses, setExpenses] = useState([]);
+  const saveExpenseData = (data) => {
+   setExpenses((prevdata) => [...prevdata, data]);
+
+  };
+
+const deleteExpense = (index) => {
+    // Delete item from local storage
+    const updatedData = [...expenses];
+    updatedData.splice(index, 1);
+    localStorage.setItem("expenses", JSON.stringify(updatedData));
+    // Delete item from state
+    setExpenses(updatedData);
+  };
+
+const getTotalWorth = () => {    
+    let total = 0;
+    for (const expense of expenses) {
+         total += parseFloat(expense.product_price);   
+}
+    return total;  
+};
+  return (
+      <div> 
+        <ExpenseForm onSaveExpenseData={saveExpenseData} /> 
+            <ul> 
+               {expenses.map((expense, index) => (
+                     <li key={index}>
+                        {expense.product_id} - {expense.product_price} - {expense.product_name}
+                        <button onClick={() => deleteExpense(index)}>Delete</button>
+                          </li>
+      ))}     
+</ul>      
+<p><strong>Total Value Worth of Product </strong>: Rs {getTotalWorth()}</p>
+    </div>  
+);
+}
+export default App;
